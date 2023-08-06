@@ -4,8 +4,10 @@
 #include <wx/graphics.h>
 #include <wx/dcbuffer.h>
 #include <vector>
+#include "Animator.hpp"
+#include "AnimatedValue.hpp"
 
-enum class BitmapScalling: int
+enum class BitmapScaling: int
 {
   Center = 0, Fit, FillWidth, FillHeight
 };
@@ -17,7 +19,7 @@ public:
   
   void DrawBitmaps(wxGraphicsContext* gc, const wxSize& drawSize);
   void DrawNavigationRect(wxGraphicsContext* gc, const wxRect& rect);
-  void DrawArrow(wxGraphicsContext* gc, const wxRect& reactToCenterIn, double lineLength, double lineWidth, double rotationAngle);
+  void DrawArrow(wxGraphicsContext* gc, const wxRect& rectToCenterIn, double lineLength, double lineWidth, double rotationAngle);
   void DrawDots(wxGraphicsContext* gc, const wxSize& drawSize, int dotCount, int dotRadius, int dotSpacing);
 
   void AnimateToPrevious();
@@ -25,12 +27,12 @@ public:
   void StartAnimation(double offsetStart, double offsetTarget, int indexTarget);
 
   std::vector<wxBitmap> bitmaps;
-  BitmapScalling scalling = BitmapScalling::Center;
+  BitmapScaling scaling = BitmapScaling::Center;
 private:
   bool shouldShowLeftArrow = false, shouldShowRightArrow = false;
   int selectedIndex;
 
-  // Animator animator;
+  Animator animator;
   double animationOffsetNormalized = 0;
 
   void OnPaint(wxPaintEvent& event);
