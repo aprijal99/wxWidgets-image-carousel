@@ -1,10 +1,14 @@
 #include "BitmapGallery.hpp"
 
-BitmapGallery::BitmapGallery(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
-  : wxWindow(parent, id, pos, size, wxFULL_REPAINT_ON_RESIZE | style)
+BitmapGallery::BitmapGallery(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size)
+  : wxWindow(parent, id, pos, size, wxFULL_REPAINT_ON_RESIZE)
 {
+  logger = new wxLogStderr();
+  wxLog::SetActiveTarget(logger);
+
   this->SetBackgroundStyle(wxBG_STYLE_PAINT);
   this->Bind(wxEVT_PAINT, &BitmapGallery::OnPaint, this);
+  
   this->Bind(wxEVT_KEY_DOWN, &BitmapGallery::OnKeyDown, this);
   this->Bind(wxEVT_LEFT_DOWN, &BitmapGallery::OnLeftDown, this);
   this->Bind(wxEVT_LEFT_DCLICK, &BitmapGallery::OnLeftDown, this);
@@ -12,13 +16,20 @@ BitmapGallery::BitmapGallery(wxWindow* parent, wxWindowID id, const wxPoint& pos
   this->Bind(wxEVT_LEAVE_WINDOW, &BitmapGallery::OnMouseLeave, this);
 }
 
+BitmapGallery::~BitmapGallery()
+{
+  wxLog::SetActiveTarget(nullptr);
+  delete logger;
+}
+
 void BitmapGallery::OnPaint(wxPaintEvent& event)
 {
   wxAutoBufferedPaintDC dc(this);
+  dc.SetBackground(wxBrush(wxColour("#2c2828")));
   dc.Clear();
 
   wxGraphicsContext* gc = wxGraphicsContext::Create(dc);
-  if (gc && bitmaps.size() > 0)
+  if (gc)
   {
     const wxSize drawSize = GetClientSize();
     DrawBitmaps(gc, drawSize);
@@ -190,12 +201,13 @@ void BitmapGallery::OnLeftDown(wxMouseEvent& event)
 
 void BitmapGallery::OnMouseMove(wxMouseEvent& event)
 {
-  if (NavigationRectLeft().Contains(event.GetPosition()))
+  if (bitmaps.size() == 0) return;
+  else if (NavigationRectLeft().Contains(event.GetPosition()) && selectedIndex != 0)
   {
     shouldShowLeftArrow = true;
     Refresh();
   }
-  else if (NavigationRectRight().Contains(event.GetPosition()))
+  else if (NavigationRectRight().Contains(event.GetPosition()) && selectedIndex != bitmaps.size() - 1)
   {
     shouldShowRightArrow = true;
     Refresh();
@@ -236,12 +248,15 @@ void BitmapGallery::StartAnimation(double offsetStart, double offsetTarget, int 
   AnimatedValue xOffset = {
     offsetStart, offsetTarget,
     [this](double value) { animationOffsetNormalized = value; },
-    AnimatedValue::EaseInOutQuad
+    AnimatedValue::EaseInOutCubic
   };
 
-  animator.SetAnimatedValue({ xOffset });
+  animator.SetAnimatedValues({ xOffset });
   animator.SetOnIter([this]() { Refresh(); });
   animator.SetOnStop([this, indexTarget]() {
+    if (indexTarget == 0) shouldShowLeftArrow = false;
+    if (indexTarget == bitmaps.size() - 1) shouldShowRightArrow = false;
+
     selectedIndex = indexTarget;
     animationOffsetNormalized = 0;
     Refresh();

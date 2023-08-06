@@ -11,7 +11,7 @@ class Animator: public wxEvtHandler
 {
 public:
   Animator();
-  void SetAnimatedValue(const std::vector<AnimatedValue>& values);
+  void SetAnimatedValues(const std::vector<AnimatedValue>& values);
   const std::vector<AnimatedValue>& GetAnimatedValues() const;
   void SetOnIter(const std::function<void()>& onIter);
   void SetOnStop(const std::function<void()>& onStop);

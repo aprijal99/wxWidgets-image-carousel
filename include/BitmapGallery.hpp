@@ -15,7 +15,8 @@ enum class BitmapScaling: int
 class BitmapGallery: public wxWindow
 {
 public:
-  BitmapGallery(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0);
+  BitmapGallery(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize);
+  ~BitmapGallery();
   
   void DrawBitmaps(wxGraphicsContext* gc, const wxSize& drawSize);
   void DrawNavigationRect(wxGraphicsContext* gc, const wxRect& rect);
@@ -29,8 +30,10 @@ public:
   std::vector<wxBitmap> bitmaps;
   BitmapScaling scaling = BitmapScaling::Center;
 private:
+  wxLog* logger;
+
   bool shouldShowLeftArrow = false, shouldShowRightArrow = false;
-  int selectedIndex;
+  int selectedIndex = 0;
 
   Animator animator;
   double animationOffsetNormalized = 0;

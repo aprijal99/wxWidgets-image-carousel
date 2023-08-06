@@ -9,7 +9,7 @@ Animator::Animator()
 void Animator::OnTimer(wxTimerEvent& event)
 {
   auto now = std::chrono::steady_clock::now();
-  auto elapsedMs = std::chrono::duration_cast<std::chrono::microseconds>(now - startTime).count();
+  auto elapsedMs = std::chrono::duration_cast<std::chrono::milliseconds>(now - startTime).count();
 
   if (elapsedMs >= animationDurationMs)
   {
@@ -28,7 +28,7 @@ void Animator::OnTimer(wxTimerEvent& event)
   onIter();
 }
 
-void Animator::SetAnimatedValue(const std::vector<AnimatedValue>& values)
+void Animator::SetAnimatedValues(const std::vector<AnimatedValue>& values)
 {
   animatedValues = values;
 }

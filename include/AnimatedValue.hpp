@@ -14,9 +14,9 @@ struct AnimatedValue
     return start + (end - start) * tNorm;
   }
 
-  static double EaseInOutQuad(double start, double end, double tNorm)
+  static double EaseInOutCubic(double start, double end, double tNorm)
   {
-    if (tNorm < 0.5) return start + (end - start) * 2 * tNorm * tNorm;
-    else return start + (end - start) * (1 - 2 * (1 - tNorm) * (1 - tNorm));
+    if (tNorm < 0.5) return start + (end - start) * 4 * tNorm * tNorm * tNorm;
+    else return start + (end - start) * (1 - 4 * (1 - tNorm) * (1 - tNorm) * (1 - tNorm));
   }
 };
