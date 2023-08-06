@@ -1,5 +1,4 @@
 #include "Frame.hpp"
-#include "Background.hpp"
 
 Frame::Frame(wxWindow* parent, wxWindowID id, const wxString& title)
   : wxFrame(parent, id, title)
